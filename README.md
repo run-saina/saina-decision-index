@@ -11,6 +11,24 @@ benchmark on your own GPU, with the official kit and scorers, and get the same f
   `/v1/systemone` on api.saina.run. Every benchmark gets one fixed rendering; no labels, benchmark names or
   prompt tuning reach the model.
 
+## Results
+
+| Model | Revision | Public index (0.3) | Run |
+| --- | --- | --- | --- |
+| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `63dfcafd` | **28.42** | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) |
+
+Run on 2026-10-10 with this kit on one RTX 3090: all 43 benchmarks, 140,178 scored requests, none failed.
+By area: tools 56.3, retrieval 37.9, language 29.6, knowledge 8.3, arts 7.5. This is the public part of
+the index, self-run; the board's official score adds private tests and is pending. Per-benchmark results
+are on the [model card](https://huggingface.co/run-saina/saina-helm-2-0.8b#evaluation).
+
+To check it, re-score the published outputs (after building the suite, below):
+
+```sh
+hf download run-saina/saina-decision-index-results results.jsonl --repo-type dataset --local-dir results
+python -m decision_index score --results results/results.jsonl --suite-dir suite-0.3 --out rescore
+```
+
 ## Quickstart
 
 Needs Python 3.11+ and a CUDA GPU (the 0.8B model fits comfortably in 8 GB).
@@ -36,7 +54,7 @@ Run and score:
 
 ```sh
 LIMIT=200 scripts/run.sh   # smoke test
-scripts/run.sh             # full suite: 110,201 requests
+scripts/run.sh             # full suite: 140,178 requests
 ```
 
 Results land in `runs/<model>/<revision>/`:
