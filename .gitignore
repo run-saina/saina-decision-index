@@ -1,0 +1,11 @@
+# Built suite and its sources: their licences forbid redistribution.
+work/
+suite/
+suite-*/
+*.jsonl.gz
+# Run outputs are published to the Hub results dataset, not git.
+runs/
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "saina-decision-index"
+version = "0.1.0"
+description = "Run Saina models through the Decision Index benchmark, reproducibly"
+authors = [{ name = "Saina", email = "dev@saina.run" }]
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+dependencies = [
+  # Official kit, pinned to the Decision Index 0.3 release commit.
+  "decision-index[rebuild] @ git+https://github.com/apolinario/decision-index@9eb2dbe2a358004c8782c66e40a83ac07b953fec",
+  # Model loading and the System One adapter, exactly as served by api.saina.run.
+  "saina[local]==0.1.2",
+  "pydantic>=2.9,<3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://saina.run"
+
+[tool.setuptools.packages.find]
+where = ["src"]
