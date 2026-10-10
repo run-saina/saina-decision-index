@@ -16,16 +16,39 @@ from saina.jev import SystemOneRequest, evaluate
 from saina.loader import load_scorer
 
 DEFAULT_MODEL = "run-saina/saina-helm-0.8b"
+CONV_KERNEL_REPO = "kernels-community/mamba-ssm"
+
+
+def use_conv_kernel(revision):
+    """Swap the reference causal convolution for the prebuilt CUDA kernel from the Hub (pinned).
+
+    Same kernel and revision pinning as Helm training; needs no CUDA compiler. Outputs match the
+    reference path within bfloat16 rounding.
+    """
+    if not re.fullmatch(r"[0-9a-f]{40}", revision):
+        raise ValueError("conv_kernel must be a 40-char commit of " + CONV_KERNEL_REPO)
+    import transformers.models.qwen3_5.modeling_qwen3_5 as modeling
+    from kernels import get_kernel
+
+    kernel = get_kernel(CONV_KERNEL_REPO, revision=revision)._causal_conv1d
+
+    def causal_conv1d_fn(hidden_states, weight, bias=None, activation=None, **kwargs):
+        return kernel.causal_conv1d_fn(hidden_states, weight, bias, activation=activation)
+
+    modeling.causal_conv1d_fn = causal_conv1d_fn
+    return f"{CONV_KERNEL_REPO}@{revision}"
 
 
 class SainaEngine(Engine):
     name = "saina"
 
-    def __init__(self, model=DEFAULT_MODEL, revision=None, device="cuda", max_length=None, repo_commit=None, **options):
+    def __init__(self, model=DEFAULT_MODEL, revision=None, device="cuda", max_length=None, repo_commit=None,
+                 conv_kernel=None, **options):
         super().__init__(**options)
         if not revision or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise ValueError("Pass --option revision=<40-char Hub commit>: runs must name an immutable checkpoint")
         self.model_id, self.revision = model, revision
+        conv = use_conv_kernel(str(conv_kernel)) if conv_kernel else None
         # Unset means the checkpoint's own context limit.
         limit = {} if max_length is None else {"max_length": int(max_length)}
         self.scorer = load_scorer(model, revision=revision, device=device, **limit)
@@ -36,6 +59,7 @@ class SainaEngine(Engine):
             "adapter": "saina.jev.evaluate (System One adapter served at /v1/systemone)",
             "engine_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             "repo_commit": repo_commit,
+            "conv_kernel": conv,  # None: transformers' reference causal convolution
             "max_length": self.scorer.max_length,
             "max_options": len(self.scorer.codes),
             "shared_trunk_pass": getattr(self.scorer, "shared_trunk_pass", False),

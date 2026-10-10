@@ -21,6 +21,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+# Faster Qwen3.5 linear-attention layers; answers match the reference path within bf16 rounding.
+fast = ["flash-linear-attention>=0.5", "kernels>=0.17"]
 
 [project.urls]
 Homepage = "https://saina.run"

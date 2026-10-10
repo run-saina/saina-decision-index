@@ -62,3 +62,8 @@ def test_capacity_limits_are_unsupported(engine):
         engine("too long", {"q": {"type": "noul", "instructions": "Yes?"}})
     with pytest.raises(Unsupported, match="question type"):
         engine("state", {"q": {"type": "rank", "instructions": "Order"}})
+
+
+def test_conv_kernel_needs_a_pinned_commit():
+    with pytest.raises(ValueError, match="40-char commit"):
+        engine_module.use_conv_kernel("main")

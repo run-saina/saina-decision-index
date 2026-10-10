@@ -7,6 +7,8 @@
 #   LIMIT     first N requests only    (smoke tests; the score is then not complete)
 #   UPLOAD    Hub dataset for results  (e.g. run-saina/saina-decision-index-results)
 #   PUBLIC=1  make a newly created UPLOAD dataset public
+#   CONV_KERNEL  commit of kernels-community/mamba-ssm for the prebuilt causal convolution
+#                (needs `pip install -e ".[fast]"`); unset uses the reference path
 #
 # Output: runs/<model>/<revision>/ — results.jsonl, benchmark-summary.json, index.json,
 # scores.json and environment.json (engine provenance, including this repo's commit).
@@ -26,6 +28,7 @@ args=(pipeline --engine saina_decision_index:SainaEngine
       --option "model=$MODEL" --option "revision=\"$REVISION\"" --option "device=$DEVICE"
       --option "repo_commit=\"$COMMIT\""
       --out "$OUT")
+[ -n "${CONV_KERNEL:-}" ] && args+=(--option "conv_kernel=\"$CONV_KERNEL\"")
 [ -n "${LIMIT:-}" ] && args+=(--limit "$LIMIT")
 [ -n "${UPLOAD:-}" ] && args+=(--upload "$UPLOAD" --upload-path "runs/$MODEL/$REVISION")
 [ "${PUBLIC:-0}" = 1 ] && args+=(--public)

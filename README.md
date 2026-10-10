@@ -97,7 +97,22 @@ python -m decision_index run --engine saina_decision_index:SainaEngine \
 ```
 
 Options: `model`, `revision` (required), `device` (default `cuda`), `max_length` (default: the checkpoint's own
-context limit).
+context limit), `conv_kernel` (see below).
+
+## Faster kernels
+
+Saina Helm is built on Qwen3.5, whose linear-attention layers run much faster with
+[flash-linear-attention](https://github.com/fla-org/flash-linear-attention) and a fused causal convolution:
+
+```sh
+pip install -e ".[fast]"
+CONV_KERNEL=20b2508ad12ae40260291539bf45183000451850 scripts/run.sh
+```
+
+`flash-linear-attention` is picked up automatically once installed. `CONV_KERNEL` loads the prebuilt causal
+convolution from [`kernels-community/mamba-ssm`](https://huggingface.co/kernels-community/mamba-ssm) at that
+commit, so no CUDA compiler is needed. Answers match the reference path within bfloat16 rounding; the kernel
+used is recorded in `environment.json`.
 
 ## Tests
 
