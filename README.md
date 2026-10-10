@@ -54,7 +54,7 @@ Interrupted runs resume where they stopped; rows that errored are retried.
 ## Other models and revisions
 
 The engine loads any Saina checkpoint on the Hub that ships a `head-config.json`. Helm 2 models need
-`saina` 0.2 or newer:
+`saina` 0.3 or newer:
 
 ```sh
 MODEL=run-saina/<model> REVISION=<40-char commit> scripts/run.sh
