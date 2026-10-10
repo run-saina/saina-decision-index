@@ -53,7 +53,8 @@ Interrupted runs resume where they stopped; rows that errored are retried.
 
 ## Other models and revisions
 
-The engine loads any Saina checkpoint on the Hub that ships a `head-config.json`:
+The engine loads any Saina checkpoint on the Hub that ships a `head-config.json`. Helm 2 models need
+`saina` 0.2 or newer:
 
 ```sh
 MODEL=run-saina/<model> REVISION=<40-char commit> scripts/run.sh
@@ -77,11 +78,12 @@ To check someone else's run, run the same model and revision and compare `index.
 
 These follow the kit's own rules:
 
-- **No truncation.** A request that does not fit the model's 8,192-token context, has more options than the
+- **No truncation.** A request that does not fit the model's context window, has more options than the
   model's answer head supports, or falls outside the `/v1/systemone` request contract is recorded as
   `unsupported` and scored as wrong. Nothing is cut or dropped to make it fit.
-- **One question at a time.** Each question in a request is scored with its own forward pass over the shared
-  state; `noul` questions become a two-option yes/no choice with their criteria as descriptions.
+- **Questions.** Helm 2 models answer every question in a request from one pass over the shared state;
+  earlier Helm models score each question with its own pass. `noul` questions become a two-option yes/no
+  choice with their criteria as descriptions.
 - **Public part only.** The kit computes the public index. The board's Full score also includes private
   tests run by its maintainers on submitted models.
 
@@ -94,7 +96,8 @@ python -m decision_index run --engine saina_decision_index:SainaEngine \
     --rows sample-100.jsonl.gz --out runs/sample
 ```
 
-Options: `model`, `revision` (required), `device` (default `cuda`), `max_length` (default 8192).
+Options: `model`, `revision` (required), `device` (default `cuda`), `max_length` (default: the checkpoint's own
+context limit).
 
 ## Tests
 

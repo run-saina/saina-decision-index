@@ -21,12 +21,14 @@ DEFAULT_MODEL = "run-saina/saina-helm-0.8b"
 class SainaEngine(Engine):
     name = "saina"
 
-    def __init__(self, model=DEFAULT_MODEL, revision=None, device="cuda", max_length=8192, repo_commit=None, **options):
+    def __init__(self, model=DEFAULT_MODEL, revision=None, device="cuda", max_length=None, repo_commit=None, **options):
         super().__init__(**options)
         if not revision or not re.fullmatch(r"[0-9a-f]{40}", revision):
             raise ValueError("Pass --option revision=<40-char Hub commit>: runs must name an immutable checkpoint")
         self.model_id, self.revision = model, revision
-        self.scorer = load_scorer(model, revision=revision, device=device, max_length=int(max_length))
+        # Unset means the checkpoint's own context limit.
+        limit = {} if max_length is None else {"max_length": int(max_length)}
+        self.scorer = load_scorer(model, revision=revision, device=device, **limit)
         self.provenance = {
             "model": model,
             "revision": revision,
@@ -36,6 +38,7 @@ class SainaEngine(Engine):
             "repo_commit": repo_commit,
             "max_length": self.scorer.max_length,
             "max_options": len(self.scorer.codes),
+            "shared_trunk_pass": getattr(self.scorer, "shared_trunk_pass", False),
             "gold_access": False,
             "no_truncation": True,
         }
