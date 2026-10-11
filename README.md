@@ -15,10 +15,11 @@ benchmark on your own GPU, with the official kit and scorers, and get the same f
 
 | Model | Revision | Public index (0.3) | Run |
 | --- | --- | --- | --- |
-| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `63dfcafd` | **28.42** | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) |
+| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `76470f9b` (current) | **29.49** | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/76470f9b…/`) |
+| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `63dfcafd` | 28.42 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (root) |
 
-Run on 2026-10-10 with this kit on one RTX 3090: all 43 benchmarks, 140,178 scored requests, none failed.
-By area: tools 56.3, retrieval 37.9, language 29.6, knowledge 8.3, arts 7.5. This is the public part of
+Each run used this kit on one RTX 3090: all 43 benchmarks, 140,178 scored requests, none failed.
+By area for `76470f9b`: tools 57.6, retrieval 40.4, language 30.4, knowledge 8.9, arts 7.0. This is the public part of
 the index, self-run; the board's official score adds private tests and is pending. Per-benchmark results
 are on the [model card](https://huggingface.co/run-saina/saina-helm-2-0.8b#evaluation).
 
