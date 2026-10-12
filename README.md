@@ -15,21 +15,22 @@ benchmark on your own GPU, with the official kit and scorers, and get the same f
 
 | Model | Revision | Public index (0.3) | Run |
 | --- | --- | --- | --- |
-| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `9903c487` (current) | **30.17** | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/9903c487…/`) |
+| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `06f2fec2` (current) | **30.47** | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/06f2fec2…/`) |
+| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `9903c487` | 30.17 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/9903c487…/`) |
 | [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `76470f9b` | 29.49 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/76470f9b…/`) |
 | [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `63dfcafd` | 28.42 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (root) |
 
 Each run used this kit on one RTX 3090: all 43 benchmarks, 140,178 scored requests, none failed.
-By area for `9903c487`: tools 58.1, retrieval 42.9, language 31.4, knowledge 8.6, arts 6.3. That is #1 among models
-under 1B on the board's public scores (next: jiwo 0.8B, 28.72). This is the public part of the index, self-run; the
+By area for `06f2fec2`: tools 58.3, retrieval 43.8, language 31.6, knowledge 8.7, arts 6.3. That is second among models
+under 1B on the board's public scores, behind Crivo-150M (36.39). This is the public part of the index, self-run; the
 board's official score adds private tests and is pending. Per-benchmark results
 are on the [model card](https://huggingface.co/run-saina/saina-helm-2-0.8b#evaluation).
 
 To check it, re-score the published outputs (after building the suite, below):
 
 ```sh
-hf download run-saina/saina-decision-index-results runs/9903c487a3b1eef45c8cc56c76155b9baccb55f9/results.jsonl --repo-type dataset --local-dir results
-python -m decision_index score --results results/runs/9903c487a3b1eef45c8cc56c76155b9baccb55f9/results.jsonl --suite-dir suite-0.3 --out rescore
+hf download run-saina/saina-decision-index-results runs/06f2fec2be4355b009b323f248a26eecca52606a/results.jsonl --repo-type dataset --local-dir results
+python -m decision_index score --results results/runs/06f2fec2be4355b009b323f248a26eecca52606a/results.jsonl --suite-dir suite-0.3 --out rescore
 ```
 
 ## Quickstart
