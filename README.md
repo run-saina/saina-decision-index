@@ -21,9 +21,10 @@ benchmark on your own GPU, with the official kit and scorers, and get the same f
 | [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `63dfcafd` | 28.42 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (root) |
 
 Each run used this kit on one RTX 3090: all 43 benchmarks, 140,178 scored requests, none failed.
-By area for `06f2fec2`: tools 58.3, retrieval 43.8, language 31.6, knowledge 8.7, arts 6.3. That is second among models
-under 1B on the board's public scores, behind Crivo-150M (36.39). This is the public part of the index, self-run; the
-board's official score adds private tests and is pending. Per-benchmark results
+By area for `06f2fec2`: tools 58.3, retrieval 43.8, language 31.6, knowledge 8.7, arts 6.3. This is the public part of
+the index, self-run; the board's official Full score for `06f2fec2`, which adds private tests, is 20.82 (board entry
+"Saina Helm 2.0"). Among models under 1B that is fifth on both the public and the Full score (leaderboard data of
+2026-10-14). Per-benchmark results
 are on the [model card](https://huggingface.co/run-saina/saina-helm-2-0.8b#evaluation).
 
 To check it, re-score the published outputs (after building the suite, below):
