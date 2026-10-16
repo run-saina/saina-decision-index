@@ -15,7 +15,8 @@ benchmark on your own GPU, with the official kit and scorers, and get the same f
 
 | Model | Revision | Public index (0.3) | Run |
 | --- | --- | --- | --- |
-| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `a13f86c1` (current) | **39.05** | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/a13f86c1…/`) |
+| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `72349026` (current) | **39.26** | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/72349026…/`) |
+| [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `a13f86c1` | 39.05 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/a13f86c1…/`) |
 | [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `88039342` | 35.19 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/88039342…/`) |
 | [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `8201c29f` | 33.10 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/8201c29f…/`) |
 | [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `15745e48` | 31.51 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (`runs/15745e48…/`) |
@@ -25,16 +26,16 @@ benchmark on your own GPU, with the official kit and scorers, and get the same f
 | [Saina Helm 2 0.8B](https://huggingface.co/run-saina/saina-helm-2-0.8b) | `63dfcafd` | 28.42 | [run-saina/saina-decision-index-results](https://huggingface.co/datasets/run-saina/saina-decision-index-results) (root) |
 
 Each run used this kit on one RTX 3090: all 43 benchmarks, 140,178 scored requests, none failed.
-By area for `a13f86c1`: tools 60.9, retrieval 50.4, language 44.5, knowledge 15.9, arts 22.1. This is the public part of
-the index, self-run; among models under 1B on the board that is the highest (leaderboard data of 2026-10-15). The board's
-official Full score, which adds private tests, is not yet available for `a13f86c1`. Per-benchmark results
+By area for `72349026`: tools 61.3, retrieval 50.5, language 44.0, knowledge 16.6, arts 22.5. This is the public part of
+the index, self-run; among models under 1B on the board that is the highest (leaderboard data of 2026-10-16). The board's
+official Full score, which adds private tests, is not yet available for `72349026`. Per-benchmark results
 are on the [model card](https://huggingface.co/run-saina/saina-helm-2-0.8b#evaluation).
 
 To check it, re-score the published outputs (after building the suite, below):
 
 ```sh
-hf download run-saina/saina-decision-index-results runs/a13f86c103076ff8ca8034ad0d7ed9360a909fbd/results.jsonl --repo-type dataset --local-dir results
-python -m decision_index score --results results/runs/a13f86c103076ff8ca8034ad0d7ed9360a909fbd/results.jsonl --suite-dir suite-0.3 --out rescore
+hf download run-saina/saina-decision-index-results runs/723490269872074d677c491f449a32cffe919c84/results.jsonl --repo-type dataset --local-dir results
+python -m decision_index score --results results/runs/723490269872074d677c491f449a32cffe919c84/results.jsonl --suite-dir suite-0.3 --out rescore
 ```
 
 ## Quickstart
