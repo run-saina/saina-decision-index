@@ -68,13 +68,16 @@ class SainaEngine(Engine):
         }
 
     def __call__(self, state, questions):
+        return self._evaluate(state, questions)
+
+    def _evaluate(self, state, questions, **inputs):
         for q in questions.values():
             if q.get("type") not in ("choice", "noul"):
                 raise Unsupported("Unsupported question type " + str(q.get("type")))
             if q["type"] == "choice" and len(q.get("criteria") or {}) > len(self.scorer.codes):
                 raise Unsupported(f"More than {len(self.scorer.codes)} options")
         try:
-            request = SystemOneRequest(model=self.model_id, state=state, questions=questions)
+            request = SystemOneRequest(model=self.model_id, state=state, questions=questions, **inputs)
         except ValidationError as e:
             # The /v1/systemone contract's declared limits (option and question counts).
             raise Unsupported("Outside the System One request contract: " + str(e.errors()[0]["msg"])) from e
@@ -102,3 +105,49 @@ class SainaEngine(Engine):
             "torch": torch.__version__,
             "loaded_parameters": sum(p.numel() for p in params.values()),
         }
+
+
+class SainaVisionEngine(SainaEngine):
+    """System One option probabilities with the official Vision image budget."""
+
+    name = "saina-vision"
+
+    def __init__(self, model="run-saina/saina-helm-2-omni-0.8b", max_pixels=1638400,
+                 image_root=None, **options):
+        from dataclasses import asdict, replace
+        from decision_index.vision.images import MAX_PIXELS
+        from decision_index.vision.engines import resize_policy
+
+        if isinstance(max_pixels, bool) or not isinstance(max_pixels, int) or not 65536 <= max_pixels <= MAX_PIXELS:
+            raise ValueError("max_pixels must be an integer between 65536 and 1638400")
+        super().__init__(model=model, **options)
+        if not hasattr(self.scorer, "image_policy"):
+            raise ValueError("SainaVisionEngine requires a multimodal checkpoint")
+        self.max_pixels, self.image_root = max_pixels, image_root
+        # Saina passes this policy explicitly to its processor on every request.
+        self.scorer.image_policy = replace(self.scorer.image_policy, max_pixels=max_pixels)
+        self.provenance.update(
+            max_pixels=max_pixels,
+            image_resize=resize_policy(max_pixels) + "; then Saina's native patch-grid resize",
+            processor_image_budget=asdict(self.scorer.image_policy),
+            readout="option probabilities; prompt.readout ignored",
+        )
+
+    def __call__(self, state, questions, images=(), prompt=None):
+        import io
+        from PIL import Image
+        from decision_index.vision import images as img
+        from saina.media import image_data_url
+
+        urls, image_pixels, image_tokens = [], [], 0
+        for ref in images or ():
+            raw = img.capped(str(ref) if isinstance(ref, Path) else ref,
+                             root=self.image_root, max_pixels=self.max_pixels)
+            urls.append(image_data_url(raw))
+            with Image.open(io.BytesIO(raw)) as im:
+                image_pixels.append(im.width * im.height)
+                image_tokens += self.scorer.image_policy.tokens(*im.size)
+        # The runner's prompt/metadata never enters the System One request.
+        # Letter-to-letter criteria for options_in_image pass through unchanged.
+        response, raw = self._evaluate(state, questions, images=urls)
+        return response, {**raw, "image_pixels": image_pixels, "image_tokens": image_tokens}

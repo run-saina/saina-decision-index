@@ -125,3 +125,27 @@ The tests use a stand-in scorer and need no GPU or download.
 ## License
 
 Apache-2.0. The Decision Index kit and each benchmark's sources keep their own licences.
+
+## Vision
+
+`SainaVisionEngine` runs Helm 2 Omni through Saina 0.4.0's System One adapter.
+It uses the official kit's image loader and aspect-preserving resize, caps each
+image and Saina's processor at 1,638,400 pixels, and records the policy in
+`environment.json` and image pixels/tokens in each row's raw output. It reads
+option probabilities; `prompt.readout` is ignored and image-only option letters
+pass through as supplied. No benchmark metadata is sent to the model.
+
+After rebuilding and verifying the official Vision suite:
+
+```sh
+decision-index vision pipeline --dir work/vision \
+  --engine saina_decision_index.engine:SainaVisionEngine \
+  --option model=run-saina/saina-helm-2-omni-0.8b \
+  --option revision=82a771c09a5d7599687e89d3ad6f2c9855424153 \
+  --option device=cuda --option max_pixels=1638400 \
+  --option repo_commit="$(git rev-parse HEAD)" \
+  --workers 1 --out runs/vision-helm-2-omni
+```
+
+For a CPU smoke test use `CUDA_VISIBLE_DEVICES=`, `vision run`,
+`--option device=cpu`, and `--limit 5`. CPU latency is not a board measurement.
