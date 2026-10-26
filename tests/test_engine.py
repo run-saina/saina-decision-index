@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import pytest
 from decision_index.engines.base import Unsupported, validate
 
@@ -12,16 +14,22 @@ class FakeScorer:
 
     max_length = 8192
     codes = ["A", "B", "C", "D"]
+    torch = SimpleNamespace(cuda=SimpleNamespace(is_available=lambda: False))
 
     def __init__(self):
         self.calls = []
 
-    def predict(self, context, question, choices):
-        self.calls.append((context, question, choices))
+    def count_text(self, text):
+        return len(text.split())
+
+    def encode(self, context, question, choices, mode):
+        self.calls.append((context, question, list(choices)))
         if "too long" in context:
             raise InputTooLong("Input exceeds model context window")
-        rest = 0.4 / (len(choices) - 1)
-        return [0.6] + [rest] * (len(choices) - 1)
+        return [1, 2, 3]
+
+    def forward(self, ids, size, mode):
+        return [0.6] + [0.4 / (size - 1)] * (size - 1)
 
 
 @pytest.fixture

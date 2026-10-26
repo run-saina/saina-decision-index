@@ -12,10 +12,10 @@ requires-python = ">=3.11"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
 dependencies = [
-  # Official kit, pinned to the Decision Index 0.3 release commit.
-  "decision-index[rebuild] @ git+https://github.com/apolinario/decision-index@9eb2dbe2a358004c8782c66e40a83ac07b953fec",
+  # Official kit, pinned to the Decision Index Vision 0.3 commit.
+  "decision-index[rebuild,vision] @ git+https://github.com/apolinario/decision-index@f5a6e4fd85fed05e77878dfc4966d0568bfb45ec",
   # Model loading and the System One adapter, exactly as served by api.saina.run.
-  "saina[local]>=0.1.2,<0.4",
+  "saina[local]==0.9.3",
   "pydantic>=2.9,<3",
 ]
 
