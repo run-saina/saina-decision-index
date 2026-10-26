@@ -15,7 +15,7 @@ dependencies = [
   # Official kit, pinned to the Decision Index Vision 0.3 commit.
   "decision-index[rebuild,vision] @ git+https://github.com/apolinario/decision-index@f5a6e4fd85fed05e77878dfc4966d0568bfb45ec",
   # Model loading and the System One adapter, exactly as served by api.saina.run.
-  "saina[local]==0.4.0",
+  "saina[local]==0.9.1",
   "pydantic>=2.9,<3",
 ]
 
