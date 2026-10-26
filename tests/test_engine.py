@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import pytest
 from decision_index.engines.base import Unsupported, validate
 
@@ -12,6 +14,7 @@ class FakeScorer:
 
     max_length = 8192
     codes = ["A", "B", "C", "D"]
+    torch = SimpleNamespace(cuda=SimpleNamespace(is_available=lambda: False))
 
     def __init__(self):
         self.calls = []

@@ -81,12 +81,20 @@ class SainaEngine(Engine):
         except ValidationError as e:
             # The /v1/systemone contract's declared limits (option and question counts).
             raise Unsupported("Outside the System One request contract: " + str(e.errors()[0]["msg"])) from e
+        self._release_cached_memory()
         try:
             response = evaluate(request, self.scorer)
         except InputTooLong as e:
             raise Unsupported(str(e)) from e
         response["model"] = f"{self.model_id}@{self.revision}"
         return response, response
+
+    def _release_cached_memory(self, slack=4 << 30):
+        """Return cached-but-unused GPU blocks after very long requests (over 4 GiB idle), so a later long
+        request does not hit allocator fragmentation; normal requests leave the cache alone. Scores are unchanged."""
+        torch = self.scorer.torch
+        if torch.cuda.is_available() and torch.cuda.memory_reserved() - torch.cuda.memory_allocated() > slack:
+            torch.cuda.empty_cache()
 
     def warmup(self):
         super().warmup()
